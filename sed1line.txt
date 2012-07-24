@@ -1,451 +1,489 @@
 -------------------------------------------------------------------------
-USEFUL ONE-LINE SCRIPTS FOR SED (Unix stream editor)        Dec. 29, 2005
+SED (UNIX stream editor) による便利な 1 行スクリプト           2005-12-29
 Compiled by Eric Pement - pemente[at]northpark[dot]edu        version 5.5
+日本語訳: 佐藤 文優 - https://github.com/fumiyas               2012-07-25
+                      https://twitter.com/satoh_fumiyasu
 
-Latest version of this file (in English) is usually at:
+このファイルの最新版は下記の URL で入手できます:
+  https://github.com/fumiyas/translation-ja/blob/master/sed1line.txt
+
+このファイルの原書 (英語) の最新版は下記の URL で入手できます:
    http://sed.sourceforge.net/sed1line.txt
    http://www.pement.org/sed/sed1line.txt
 
-This file will also available in other languages:
-  Chinese     - http://sed.sourceforge.net/sed1line_zh-CN.html
-  Czech       - http://sed.sourceforge.net/sed1line_cz.html
-  Dutch       - http://sed.sourceforge.net/sed1line_nl.html
-  French      - http://sed.sourceforge.net/sed1line_fr.html
-  German      - http://sed.sourceforge.net/sed1line_de.html
-  Italian     - (pending)
-  Portuguese  - http://sed.sourceforge.net/sed1line_pt-BR.html
-  Spanish     - (pending)
+このファイルのほかの言語版は下記の URL で入手できます:
+  中国語       - http://sed.sourceforge.net/sed1line_zh-CN.html
+  チェコ語     - http://sed.sourceforge.net/sed1line_cz.html
+  オランダ語   - http://sed.sourceforge.net/sed1line_nl.html
+  フランス語   - http://sed.sourceforge.net/sed1line_fr.html
+  ドイツ語     - http://sed.sourceforge.net/sed1line_de.html
+  イタリア語   - (保留中)
+  ポルトガル語 - http://sed.sourceforge.net/sed1line_pt-BR.html
+  スペイン語   - (保留中)
 
 
-FILE SPACING:
+ファイルの行間:
 
- # double space a file
+ # 各行の下に空行を挿入
  sed G
 
- # double space a file which already has blank lines in it. Output file
- # should contain no more than one blank line between lines of text.
+ # すでに空行が挿入されている行を含むファイルに空行を挿入。
+ # 出力ファイルのテキスト行間の空行は 1 行になる。
  sed '/^$/d;G'
 
- # triple space a file
+ # 各行の下に空行 2 つを挿入
  sed 'G;G'
 
- # undo double-spacing (assumes even-numbered lines are always blank)
+ # 挿入した空行を削除 (空行は偶数番目の行に現れることを前提にしている)
  sed 'n;d'
 
- # insert a blank line above every line which matches "regex"
+ # 正規表現「regexp」に一致するすべての行の上に空行を挿入
  sed '/regex/{x;p;x;}'
 
+ # 正規表現「regexp」に一致するすべての行の下に空行を挿入
  # insert a blank line below every line which matches "regex"
  sed '/regex/G'
 
- # insert a blank line above and below every line which matches "regex"
+ # 正規表現「regexp」に一致するすべての行の上下に空行を挿入
  sed '/regex/{x;p;x;G;}'
 
-NUMBERING:
+番号付け:
 
- # number each line of a file (simple left alignment). Using a tab (see
- # note on '\t' at end of file) instead of space will preserve margins.
+ # ファイルの各行に行番号 (左寄せ) を付ける。スペースの代わりに
+ # タブを利用して左マージンを維持している。(本ファイル最後の
+ # 「\t」に関する注意を参照のこと)
  sed = filename | sed 'N;s/\n/\t/'
 
- # number each line of a file (number on left, right-aligned)
+ # ファイルの各行に行番号 (右寄せ) を付ける
  sed = filename | sed 'N; s/^/     /; s/ *\(.\{6,\}\)\n/\1  /'
 
- # number each line of file, but only print numbers if line is not blank
+ # ファイルの各行に行番号を付ける。ただし空行には付けない
  sed '/./=' filename | sed '/./N; s/\n/ /'
 
- # count lines (emulates "wc -l")
+ # 行数を数える (「wc -l」の模倣)
  sed -n '$='
 
-TEXT CONVERSION AND SUBSTITUTION:
+テキストの変換と置換:
 
- # IN UNIX ENVIRONMENT: convert DOS newlines (CR/LF) to Unix format.
- sed 's/.$//'               # assumes that all lines end with CR/LF
- sed 's/^M$//'              # in bash/tcsh, press Ctrl-V then Ctrl-M
- sed 's/\x0D$//'            # works on ssed, gsed 3.02.80 or higher
+ # UNIX 環境: DOS 形式の改行 (CR/LF) を UNIX 形式 (LF) に変換
+ sed 's/.$//'               # すべての行の終端が CR/LF になっていることが前提
+ sed 's/^M$//'              # bash/zsh/tcsh では「^M」を Ctrl-V, Ctrl-M の順に入力
+ sed 's/\x0D$//'            # ssed または gsed 3.02.80 以降で動作
 
- # IN UNIX ENVIRONMENT: convert Unix newlines (LF) to DOS format.
- sed "s/$/`echo -e \\\r`/"            # command line under ksh
- sed 's/$'"/`echo \\\r`/"             # command line under bash
- sed "s/$/`echo \\\r`/"               # command line under zsh
- sed 's/$/\r/'                        # gsed 3.02.80 or higher
+ # UNIX 環境: UNIX 形式の改行 (LF) を DOS 形式 (CR/LF) に変換
+ sed "s/$/`echo -e \\\r`/"            # ksh のコマンドライン下の場合
+ sed 's/$'"/`echo \\\r`/"             # bash のコマンドライン下の場合
+ sed "s/$/`echo \\\r`/"               # zsh のコマンドライン下の場合
+ sed 's/$/\r/'                        # gsed 3.02.80 以降
 
- # IN DOS ENVIRONMENT: convert Unix newlines (LF) to DOS format.
- sed "s/$//"                          # method 1
- sed -n p                             # method 2
+ # DOS 環境: UNIX 形式の改行 (LF) を DOS 形式 (CR/LF) に変換
+ sed "s/$//"                          # 手法 1
+ sed -n p                             # 手法 2
 
- # IN DOS ENVIRONMENT: convert DOS newlines (CR/LF) to Unix format.
- # Can only be done with UnxUtils sed, version 4.0.7 or higher. The
- # UnxUtils version can be identified by the custom "--text" switch
- # which appears when you use the "--help" switch. Otherwise, changing
- # DOS newlines to Unix newlines cannot be done with sed in a DOS
- # environment. Use "tr" instead.
- sed "s/\r//" infile >outfile         # UnxUtils sed v4.0.7 or higher
- tr -d \r <infile >outfile            # GNU tr version 1.22 or higher
+ # DOS 環境: DOS 形式の改行 (CR/LF) を UNIX 形式 (LF) に変換
+ # UnixUtils 付属の sed バージョン 4.0.7 以降でのみ動作する。
+ # UnixUtils 付属の sed は特殊な「--text」オプションを持っていか
+ # どうかで識別でき、「--help」オプションを利用して確認できる。
+ # ほかの sed では、DOS の改行を UNIX の改行に変換することは
+ # 不可能。代わりに tr コマンドを利用する
+ sed "s/\r//" infile >outfile         # UnxUtils sed 4.0.7 以降
+ tr -d \r <infile >outfile            # GNU tr 1.22 以降
 
- # delete leading whitespace (spaces, tabs) from front of each line
- # aligns all text flush left
+ # 各行の行頭の空白文字 (スペース、タブ) を削除
+ # すべてのテキストが左に揃う
  sed 's/^[ \t]*//'                    # see note on '\t' at end of file
 
- # delete trailing whitespace (spaces, tabs) from end of each line
+ # 各行の行末の空白文字 (スペース、タブ) を削除
  sed 's/[ \t]*$//'                    # see note on '\t' at end of file
 
- # delete BOTH leading and trailing whitespace from each line
+ # 各行の行頭と行末の空白文字 (スペース、タブ) を削除
  sed 's/^[ \t]*//;s/[ \t]*$//'
 
- # insert 5 blank spaces at beginning of each line (make page offset)
+ # 各行の行頭にスペースを 5 つ挿入 (ページオフセットを作る)
  sed 's/^/     /'
 
- # align all text flush right on a 79-column width
+ # すべてのテキストを幅 79 カラムで右揃え
+ # 訳注: 日本語などのマルチバイト文字は非対応
  sed -e :a -e 's/^.\{1,78\}$/ &/;ta'  # set at 78 plus 1 space
 
- # center all text in the middle of 79-column width. In method 1,
- # spaces at the beginning of the line are significant, and trailing
- # spaces are appended at the end of the line. In method 2, spaces at
- # the beginning of the line are discarded in centering the line, and
- # no trailing spaces appear at the end of lines.
- sed  -e :a -e 's/^.\{1,77\}$/ & /;ta'                     # method 1
- sed  -e :a -e 's/^.\{1,77\}$/ &/;ta' -e 's/\( *\)\1/\1/'  # method 2
+ # すべてのテキストを幅 79 カラムで中央揃え
+ # 手法 1 は、入力の行頭のスペースが残り、行末にスペースが追加される。
+ # 手法 2 は、入力の行頭のスペースは削除され、行末にスペースは追加
+ # されない。
+ sed  -e :a -e 's/^.\{1,77\}$/ & /;ta'                     # 手法 1
+ sed  -e :a -e 's/^.\{1,77\}$/ &/;ta' -e 's/\( *\)\1/\1/'  # 手法 2
 
- # substitute (find and replace) "foo" with "bar" on each line
- sed 's/foo/bar/'             # replaces only 1st instance in a line
- sed 's/foo/bar/4'            # replaces only 4th instance in a line
- sed 's/foo/bar/g'            # replaces ALL instances in a line
- sed 's/\(.*\)foo\(.*foo\)/\1bar\2/' # replace the next-to-last case
- sed 's/\(.*\)foo/\1bar/'            # replace only the last case
+ # 各行の「foo」を「bar」で置換
+ sed 's/foo/bar/'             # 行中の最初に発見したものを置換
+ sed 's/foo/bar/4'            # 行中の 4 番目に発見したものを置換
+ sed 's/foo/bar/g'            # 行中のすべてを置換
+ sed 's/\(.*\)foo\(.*foo\)/\1bar\2/' # 最後の前のものだけを置換
+ sed 's/\(.*\)foo/\1bar/'            # 最後のものだけを置換
 
- # substitute "foo" with "bar" ONLY for lines which contain "baz"
+ # 「baz」を含む各行の「foo」を「bar」に置換
  sed '/baz/s/foo/bar/g'
 
- # substitute "foo" with "bar" EXCEPT for lines which contain "baz"
+ # 「baz」を含まない各行の「foo」を「bar」に置換
  sed '/baz/!s/foo/bar/g'
 
- # change "scarlet" or "ruby" or "puce" to "red"
- sed 's/scarlet/red/g;s/ruby/red/g;s/puce/red/g'   # most seds
- gsed 's/scarlet\|ruby\|puce/red/g'                # GNU sed only
+ # 「scarlet」、「ruby」、「puce」を「red」に変更
+ sed 's/scarlet/red/g;s/ruby/red/g;s/puce/red/g'   # 多く sed 対応
+ gsed 's/scarlet\|ruby\|puce/red/g'                # GNU sed のみ
 
- # reverse order of lines (emulates "tac")
- # bug/feature in HHsed v1.5 causes blank lines to be deleted
- sed '1!G;h;$!d'               # method 1
- sed -n '1!G;h;$p'             # method 2
+ # 行の順番を逆にする (「tac」の模倣)
+ # HHsed v1.5 ではバグ/仕様により空白行が削除される
+ sed '1!G;h;$!d'               # 手法 1
+ sed -n '1!G;h;$p'             # 手法 2
 
- # reverse each character on the line (emulates "rev")
+ # 行の文字の順番を逆にする (「rev」の模倣)
  sed '/\n/!G;s/\(.\)\(.*\n\)/&\2\1/;//D;s/.//'
 
- # join pairs of lines side-by-side (like "paste")
+ # 2 行ずつ結合して並べる (「paste」と似た動作)
  sed '$!N;s/\n/ /'
 
- # if a line ends with a backslash, append the next line to it
+ # 行末がバックスラッシュ「\」の場合に次の行を結合
  sed -e :a -e '/\\$/N; s/\\\n//; ta'
 
- # if a line begins with an equal sign, append it to the previous line
- # and replace the "=" with a single space
+ # 行頭がイコール記号「=」場合に前の行に結合して「=」をスペースに置換
  sed -e :a -e '$!N;s/\n=/ /;ta' -e 'P;D'
 
- # add commas to numeric strings, changing "1234567" to "1,234,567"
+ # 数字の文字列にカンマ「,」を追加 (「1234567」を「1,234,567」に変換)
  gsed ':a;s/\B[0-9]\{3\}\>/,&/;ta'                     # GNU sed
- sed -e :a -e 's/\(.*[0-9]\)\([0-9]\{3\}\)/\1,\2/;ta'  # other seds
+ sed -e :a -e 's/\(.*[0-9]\)\([0-9]\{3\}\)/\1,\2/;ta'  # ほかの sed
 
- # add commas to numbers with decimal points and minus signs (GNU sed)
+ # 小数点「.」とマイナス記号「-」を含む数字列にカンマ「,」を追加 (GNU sed)
  gsed -r ':a;s/(^|[^0-9.])([0-9]+)([0-9]{3})/\1\2,\3/g;ta'
 
- # add a blank line every 5 lines (after lines 5, 10, 15, 20, etc.)
- gsed '0~5G'                  # GNU sed only
- sed 'n;n;n;n;G;'             # other seds
+ # 5 行ごとに空白行を追加
+ gsed '0~5G'                  # GNU sed のみ
+ sed 'n;n;n;n;G;'             # ほかの sed
 
-SELECTIVE PRINTING OF CERTAIN LINES:
+一定の行を選択して表示:
 
- # print first 10 lines of file (emulates behavior of "head")
+ # 最初の 10 行を表示 (「head」の模倣)
  sed 10q
 
- # print first line of file (emulates "head -1")
+ # 最初の 1 行を表示 (「head -n 1」の模倣)
  sed q
 
- # print the last 10 lines of a file (emulates "tail")
+ # 最後の 10 行を表示 (「tail」の模倣)
  sed -e :a -e '$q;N;11,$D;ba'
 
- # print the last 2 lines of a file (emulates "tail -2")
+ # 最後の 2 行を表示 (「tail -n 2」の模倣)
  sed '$!N;$!D'
 
- # print the last line of a file (emulates "tail -1")
- sed '$!d'                    # method 1
- sed -n '$p'                  # method 2
+ # 最後の 1 行を表示 (「tail -n 1」の模倣)
+ sed '$!d'                    # 手法 1
+ sed -n '$p'                  # 手法 2
 
- # print the next-to-the-last line of a file
- sed -e '$!{h;d;}' -e x              # for 1-line files, print blank line
- sed -e '1{$q;}' -e '$!{h;d;}' -e x  # for 1-line files, print the line
- sed -e '1{$d;}' -e '$!{h;d;}' -e x  # for 1-line files, print nothing
+ # 最後の行の前の行を表示
+ sed -e '$!{h;d;}' -e x              # 入力が 1 行の場合は空白行を表示
+ sed -e '1{$q;}' -e '$!{h;d;}' -e x  # 入力が 1 行の場合は最終行を表示
+ sed -e '1{$d;}' -e '$!{h;d;}' -e x  # 入力が 1 行の場合は何も表示されない
 
- # print only lines which match regular expression (emulates "grep")
- sed -n '/regexp/p'           # method 1
- sed '/regexp/!d'             # method 2
+ # 正規表現に一致する行だけを表示 (「grep」の模倣)
+ sed -n '/regexp/p'           # 手法 1
+ sed '/regexp/!d'             # 手法 2
 
- # print only lines which do NOT match regexp (emulates "grep -v")
+ # 正規表現に一致しない行だけを表示 (「grep -v」の模倣)
  sed -n '/regexp/!p'          # method 1, corresponds to above
  sed '/regexp/d'              # method 2, simpler syntax
 
- # print the line immediately before a regexp, but not the line
- # containing the regexp
+ # 正規表現に一致する行の直前の行を表示する、ただし
+ # 正規表現に一致する行は表示しない
  sed -n '/regexp/{g;1!p;};h'
 
- # print the line immediately after a regexp, but not the line
- # containing the regexp
+ # 正規表現に一致する行の直後の行を表示する、ただし
+ # 正規表現に一致する行は表示しない
  sed -n '/regexp/{n;p;}'
 
- # print 1 line of context before and after regexp, with line number
- # indicating where the regexp occurred (similar to "grep -A1 -B1")
+ # 正規表現に一致する行とその前後の 1 行を行番号付きで表示する
+ # (「grep -A1 -B1」の模倣)
  sed -n -e '/regexp/{=;x;1!p;g;$!N;p;D;}' -e h
 
- # grep for AAA and BBB and CCC (in any order)
+ # 「AAA」、「BBB」、「CCC」すべてを含む行を表示 (順番は問わない)
  sed '/AAA/!d; /BBB/!d; /CCC/!d'
 
- # grep for AAA and BBB and CCC (in that order)
+ # 「AAA」、「BBB」、「CCC」すべてを含む行を表示 (指定の順番で現われる場合)
  sed '/AAA.*BBB.*CCC/!d'
 
- # grep for AAA or BBB or CCC (emulates "egrep")
- sed -e '/AAA/b' -e '/BBB/b' -e '/CCC/b' -e d    # most seds
- gsed '/AAA\|BBB\|CCC/!d'                        # GNU sed only
+ # 「AAA」、「BBB」、「CCC」いずれかを含む行を表示 (「egrep」の模倣)
+ sed -e '/AAA/b' -e '/BBB/b' -e '/CCC/b' -e d    # 多くの sed 対応
+ gsed '/AAA\|BBB\|CCC/!d'                        # GNU sed のみ
 
- # print paragraph if it contains AAA (blank lines separate paragraphs)
- # HHsed v1.5 must insert a 'G;' after 'x;' in the next 3 scripts below
+ # 「AAA」を含む段落を表示 (段落は空行で区切られていることを前提)
+ # HHsed v1.5 の場合、以下の 3 つのスクリプト中の「x;」の後に
+ # 「G;」を追加する必要あり
  sed -e '/./{H;$!d;}' -e 'x;/AAA/!d;'
 
- # print paragraph if it contains AAA and BBB and CCC (in any order)
+ # 「AAA」、「BBB」、「CCC」すべてを含む段落を表示 (順番は問わない)
  sed -e '/./{H;$!d;}' -e 'x;/AAA/!d;/BBB/!d;/CCC/!d'
 
- # print paragraph if it contains AAA or BBB or CCC
+ # 「AAA」、「BBB」、「CCC」いずれかを含む段落を表示
  sed -e '/./{H;$!d;}' -e 'x;/AAA/b' -e '/BBB/b' -e '/CCC/b' -e d
- gsed '/./{H;$!d;};x;/AAA\|BBB\|CCC/b;d'         # GNU sed only
+ gsed '/./{H;$!d;};x;/AAA\|BBB\|CCC/b;d'         # GNU sed のみ
 
- # print only lines of 65 characters or longer
+ # 65 文字以上の行だけを表示
  sed -n '/^.\{65\}/p'
 
- # print only lines of less than 65 characters
- sed -n '/^.\{65\}/!p'        # method 1, corresponds to above
- sed '/^.\{65\}/d'            # method 2, simpler syntax
+ # 64 文字未満の行だけを表示
+ sed -n '/^.\{65\}/!p'        # 手法 1, 上記スクリプトの逆に相当
+ sed '/^.\{65\}/d'            # 手法 2, より単純な書き方
 
- # print section of file from regular expression to end of file
+ # 正規表現に一致する最初の行から最後の行までを表示
  sed -n '/regexp/,$p'
 
- # print section of file based on line numbers (lines 8-12, inclusive)
- sed -n '8,12p'               # method 1
- sed '8,12!d'                 # method 2
+ # 行番号を指定して表示 (8 〜 12 行目の場合)
+ sed -n '8,12p'               # 手法 1
+ sed '8,12!d'                 # 手法 2
 
- # print line number 52
- sed -n '52p'                 # method 1
- sed '52!d'                   # method 2
- sed '52q;d'                  # method 3, efficient on large files
+ # 52 行目を表示
+ sed -n '52p'                 # 手法 1
+ sed '52!d'                   # 手法 2
+ sed '52q;d'                  # 手法 3, 巨大なファイルで効率的
 
- # beginning at line 3, print every 7th line
- gsed -n '3~7p'               # GNU sed only
- sed -n '3,${p;n;n;n;n;n;n;}' # other seds
+ # 3 行目以降の 1 行を 6 行おきに表示
+ gsed -n '3~7p'               # GNU sed のみ
+ sed -n '3,${p;n;n;n;n;n;n;}' # ほかの sed
 
- # print section of file between two regular expressions (inclusive)
- sed -n '/Iowa/,/Montana/p'             # case sensitive
+ # 2 つの正規表現に一致する行間の行を表示 (一致する行も含む)
+ sed -n '/Iowa/,/Montana/p'             # 大文字・小文字は区別される
 
-SELECTIVE DELETION OF CERTAIN LINES:
+一定の行を選択して削除:
 
- # print all of file EXCEPT section between 2 regular expressions
+ # 2 つの正規表現に一致する行間を除外して表示
  sed '/Iowa/,/Montana/d'
 
- # delete duplicate, consecutive lines from a file (emulates "uniq").
- # First line in a set of duplicate lines is kept, rest are deleted.
- sed '$!N; /^\(.*\)\n\1$/!P; D'
+ # 連続する重複行を削除 (「uniq」の模倣)
+ # 重複行は最初の行だけ表示し、残りは削除する
+ jed '$!N; /^\(.*\)\n\1$/!P; D'
 
- # delete duplicate, nonconsecutive lines from a file. Beware not to
- # overflow the buffer size of the hold space, or else use GNU sed.
+ # 連続しない重複行を削除
+ # 注意: 行データを保持するためのバッファーサイズが不足しないように
+ # する、もしくは GNU sed を仕様すること
  sed -n 'G; s/\n/&&/; /^\([ -~]*\n\).*\n\1/d; s/\n//; h; P'
 
- # delete all lines except duplicate lines (emulates "uniq -d").
+ # 重複する行以外を削除 (「uniq -d」の模倣)
  sed '$!N; s/^\(.*\)\n\1$/\1/; t; D'
 
- # delete the first 10 lines of a file
+ # 最初の 10 行を削除
  sed '1,10d'
 
- # delete the last line of a file
+ # 最後の 1 行を削除
  sed '$d'
 
- # delete the last 2 lines of a file
+ # 最後の 2 行を削除
  sed 'N;$!P;$!D;$d'
 
- # delete the last 10 lines of a file
- sed -e :a -e '$d;N;2,10ba' -e 'P;D'   # method 1
- sed -n -e :a -e '1,10!{P;N;D;};N;ba'  # method 2
+ # 最後の 10 行を削除
+ sed -e :a -e '$d;N;2,10ba' -e 'P;D'   # 手法 1
+ sed -n -e :a -e '1,10!{P;N;D;};N;ba'  # 手法 2
 
- # delete every 8th line
- gsed '0~8d'                           # GNU sed only
- sed 'n;n;n;n;n;n;n;d;'                # other seds
+ # 8 番目の行ごとに削除
+ gsed '0~8d'                           # GNU sed のみ
+ sed 'n;n;n;n;n;n;n;d;'                # ほかの sed
 
- # delete lines matching pattern
+ # 正規表現に一致する行を削除
  sed '/pattern/d'
 
- # delete ALL blank lines from a file (same as "grep '.' ")
- sed '/^$/d'                           # method 1
- sed '/./!d'                           # method 2
+ # すべての空行を削除 (「grep .」と同様)
+ sed '/^$/d'                           # 手法 1
+ sed '/./!d'                           # 手法 2
 
- # delete all CONSECUTIVE blank lines from file except the first; also
- # deletes all blank lines from top and end of file (emulates "cat -s")
- sed '/./,/^$/!d'          # method 1, allows 0 blanks at top, 1 at EOF
- sed '/^$/N;/\n$/D'        # method 2, allows 1 blank at top, 0 at EOF
+ # 連続する空行を最初の空行を除き削除 (1 つの空行にまとめる)
+ # また、入力の最初と最後の空行を削除する (「cat -s」の模倣)
+ sed '/./,/^$/!d'      # 手法 1, 最初に現われる空行は削除され、最後のは 1 行残る
+ sed '/^$/N;/\n$/D'    # 手法 2, 最初と最後に現われる空行は 1 行残る
+ # 訳注: 手法 2 に続く文は原文は「allows 1 blank at top, 0 at EOF」だが、
+ #       手元の GNU sed 4.2.1 で試した限りでは訳文のようになった。
 
- # delete all CONSECUTIVE blank lines from file except the first 2:
+ # 連続する空行を最初の空行 2 つを除き削除 (2 つの空行にまとめる)
  sed '/^$/N;/\n$/N;//D'
 
- # delete all leading blank lines at top of file
+ # 入力の最初に現われる空行をすべて削除
  sed '/./,$!d'
 
- # delete all trailing blank lines at end of file
+ # 入力の最後に現われる空行をすべて削除
  sed -e :a -e '/^\n*$/{$d;N;ba' -e '}'  # works on all seds
  sed -e :a -e '/^\n*$/N;/\n$/ba'        # ditto, except for gsed 3.02.*
 
- # delete the last line of each paragraph
+ # 各段落の最後の 1 行を削除
  sed -n '/^$/{p;h;};/./{x;/./p;}'
 
-SPECIAL APPLICATIONS:
+特殊な応用:
 
- # remove nroff overstrikes (char, backspace) from man pages. The 'echo'
- # command may need an -e switch if you use Unix System V or bash shell.
- sed "s/.`echo \\\b`//g"    # double quotes required for Unix environment
- sed 's/.^H//g'             # in bash/tcsh, press Ctrl-V and then Ctrl-H
- sed 's/.\x08//g'           # hex expression for sed 1.5, GNU sed, ssed
+ # man ページから nroff の重ね打ち (任意の文字とバックスペース) を削除
+ # 「echo」コマンドは、UNIX System V か bash の場合は -e オプションが必要
+ sed "s/.`echo \\\b`//g"    # UNIX 環境ではダブルクォート「"」が必要
+ sed 's/.^H//g'             # bash/zsh/tcsh では「^H」を Ctrl-V, Ctrl-H の順に入力
+ sed 's/.\x08//g'           # 16 進数表現 (sed 1.5, GNU sed, ssed)
 
- # get Usenet/e-mail message header
- sed '/^$/q'                # deletes everything after first blank line
+ # Usenet や e-mail メッセージのヘッダー部を取得
+ sed '/^$/q'                # 最初の空行以降を削除
 
- # get Usenet/e-mail message body
- sed '1,/^$/d'              # deletes everything up to first blank line
+ # Usenet や e-mail メッセージのボディ部を取得
+ sed '1,/^$/d'              # 最初の行から最初の空行までを削除
 
- # get Subject header, but remove initial "Subject: " portion
+ # Subject ヘッダーを取得、ただし行頭の「Subject: 」は削除
+ # 訳注: Subject ヘッダーが複数行の場合には対応していない
+ # 訳注: ヘッダーのフィールド名は大文字・小文字を考慮しないが
+ #       それを考慮していない
  sed '/^Subject: */!d; s///;q'
 
- # get return address header
+ # Reply-To ヘッダーを取得、なければ From ヘッダーを取得
+ # 訳注: ヘッダーのフィールド名は大文字・小文字を考慮しないが
+ #       それを考慮していない
  sed '/^Reply-To:/q; /^From:/h; /./d;g;q'
 
- # parse out the address proper. Pulls out the e-mail address by itself
- # from the 1-line return address header (see preceding script)
+ # アドレスを適切に抜き出す
+ # アドレスヘッダー 1 行 (上記スクリプトを参照) から e-mail アドレスを取得
+ # 訳注: RFC 822 (とその更新版である RFC 5322 など) で既定される
+ #       ヘッダー中のアドレスの構文は複雑であり、このスクリプトでは
+ #       特定の形式しか対応できない
  sed 's/ *(.*)//; s/>.*//; s/.*[:<] *//'
 
- # add a leading angle bracket and space to each line (quote a message)
+ # 各行の行頭に山括弧「>」とスペースを追加 (メッセージの引用)
  sed 's/^/> /'
 
- # delete leading angle bracket & space from each line (unquote a message)
+ # 各行の行頭の山括弧「>」とスペースを削除 (メッセージの引用を解除)
  sed 's/^> //'
 
- # remove most HTML tags (accommodates multiple-line tags)
+ # HTML のタグを削除 (複数行のタグも対応)
  sed -e :a -e 's/<[^>]*>//g;/</N;//ba'
 
- # extract multi-part uuencoded binaries, removing extraneous header
- # info, so that only the uuencoded portion remains. Files passed to
- # sed must be passed in the proper order. Version 1 can be entered
- # from the command line; version 2 can be made into an executable
- # Unix shell script. (Modified from a script by Rahul Dhesi.)
- sed '/^end/,/^begin/d' file1 file2 ... fileX | uudecode   # vers. 1
- sed '/^end/,/^begin/d' "$@" | uudecode                    # vers. 2
+ # 複数のファイルに分かれた uuencode されたバイナリーデータを展開
+ # 無関係なヘッダー情報を削除して uuencode データだけを抽出している。
+ # sed に渡すファイルは適切な順番にする必要がある。
+ # 手法 1 はコマンドラインで利用可能。
+ # 手法 2 は UNIX のシェルスクリプト内に記述し、スクリプトの
+ # コマンドライン引数でファイルを指定する。
+ sed '/^end/,/^begin/d' file1 file2 ... fileX | uudecode   # 手法 1
+ sed '/^end/,/^begin/d' "$@" | uudecode                    # 手法 2
 
- # sort paragraphs of file alphabetically. Paragraphs are separated by blank
- # lines. GNU sed uses \v for vertical tab, or any unique char will do.
+ # 段落をアルファベット順にソート (段落は空行で区切られていることを前提)
+ # GNU sed 版は垂直タブ「\v」を一時的な区切文字として利用しているが、
+ # 入力中に現われない一意な文字であれば、ほかの文字でも動作する。
  sed '/./{H;d;};x;s/\n/={NL}=/g' file | sort | sed '1s/={NL}=//;s/={NL}=/\n/g'
  gsed '/./{H;d};x;y/\n/\v/' file | sort | sed '1s/\v//;y/\v/\n/'
 
- # zip up each .TXT file individually, deleting the source file and
- # setting the name of each .ZIP file to the basename of the .TXT file
- # (under DOS: the "dir /b" switch returns bare filenames in all caps).
+ # 各 *.TXT ファイルを個別に ZIP ファイル化
+ # ZIP ファイル名は元の *.TXT ファイルのベース名を元に設定され、
+ # ZIP ファイル作成後は元の *.TXT ファイルは削除される。
+ # (DOS では「dir /b」でファイル名が大文字化して表示される)
  echo @echo off >zipup.bat
  dir /b *.txt | sed "s/^\(.*\)\.TXT/pkzip -mo \1 \1.TXT/" >>zipup.bat
 
-TYPICAL USE: Sed takes one or more editing commands and applies all of
-them, in sequence, to each line of input. After all the commands have
-been applied to the first input line, that line is output and a second
-input line is taken for processing, and the cycle repeats. The
-preceding examples assume that input comes from the standard input
-device (i.e, the console, normally this will be piped input). One or
-more filenames can be appended to the command line if the input does
-not come from stdin. Output is sent to stdout (the screen). Thus:
+典型的な使用方法: sed は 1 つ以上の編集コマンドを受け取り、それらを
+順番に、入力の各行に適用する。最初の入力行に対してすべてのコマンドを
+適用した後、その行を出力し、次の行を受け取ってこのサイクルを繰り返す。
+先の例の多くは、入力は標準入力デバイス (つまりコンソール) を前提と
+している (通常はパイプで入力する)。標準入力から入力しない場合は、
+1 つ以上のファイルをコマンドラインに指定できる。出力は標準出力
+(画面) に送られる。よって、使い方は次のようになる:
 
- cat filename | sed '10q'        # uses piped input
- sed '10q' filename              # same effect, avoids a useless "cat"
- sed '10q' filename > newfile    # redirects output to disk
+ cat filename | sed '10q'        # パイプで入力を得る
+ sed '10q' filename              # 同上。無駄な「cat」を省く
+ sed '10q' filename > newfile    # 出力をファイルに向ける
 
-For additional syntax instructions, including the way to apply editing
-commands from a disk file instead of the command line, consult "sed &
-awk, 2nd Edition," by Dale Dougherty and Arnold Robbins (O'Reilly,
-1997; http://www.ora.com), "UNIX Text Processing," by Dale Dougherty
-and Tim O'Reilly (Hayden Books, 1987) or the tutorials by Mike Arst
-distributed in U-SEDIT2.ZIP (many sites). To fully exploit the power
-of sed, one must understand "regular expressions." For this, see
-"Mastering Regular Expressions" by Jeffrey Friedl (O'Reilly, 1997).
-The manual ("man") pages on Unix systems may be helpful (try "man
-sed", "man regexp", or the subsection on regular expressions in "man
-ed"), but man pages are notoriously difficult. They are not written to
-teach sed use or regexps to first-time users, but as a reference text
-for those already acquainted with these tools.
+これ以外の構文の解説 (コマンドラインでなくファイルから編集コマンドを
+得る方法など) については、下記の文献を参照のこと:
 
-QUOTING SYNTAX: The preceding examples use single quotes ('...')
-instead of double quotes ("...") to enclose editing commands, since
-sed is typically used on a Unix platform. Single quotes prevent the
-Unix shell from intrepreting the dollar sign ($) and backquotes
-(`...`), which are expanded by the shell if they are enclosed in
-double quotes. Users of the "csh" shell and derivatives will also need
-to quote the exclamation mark (!) with the backslash (i.e., \!) to
-properly run the examples listed above, even within single quotes.
-Versions of sed written for DOS invariably require double quotes
-("...") instead of single quotes to enclose editing commands.
+  * sed & awk, 2nd Edition
+    Dale Dougherty, Arnold Robbins 著
+    O'Reilly, 1997
+    http://shop.oreilly.com/product/9781565922259.do
+  * UNIX Text Processing
+    Dale Dougherty, and Tim O'Reilly 著
+    Hayden Books, 1987
+    http://oreilly.com/openbook/utp/
+  * U-SEDIT2.ZIP に含まれているチュートリアル
+    Mike Arst 著
+    多くのサイトで配布されている
 
-USE OF '\t' IN SED SCRIPTS: For clarity in documentation, we have used
-the expression '\t' to indicate a tab character (0x09) in the scripts.
-However, most versions of sed do not recognize the '\t' abbreviation,
-so when typing these scripts from the command line, you should press
-the TAB key instead. '\t' is supported as a regular expression
-metacharacter in awk, perl, and HHsed, sedmod, and GNU sed v3.02.80.
+sed の能力を存分に発揮するには「正規表現」の理解が不可欠である。
+下記の文献を参照のこと:
 
-VERSIONS OF SED: Versions of sed do differ, and some slight syntax
-variation is to be expected. In particular, most do not support the
-use of labels (:name) or branch instructions (b,t) within editing
-commands, except at the end of those commands. We have used the syntax
-which will be portable to most users of sed, even though the popular
-GNU versions of sed allow a more succinct syntax. When the reader sees
-a fairly long command such as this:
+  * Mastering Regular Expressions
+    Jeffrey Friedl 著
+    O'Reilly, 1997
+    http://shop.oreilly.com/product/9780596528126.do
+  * UNIX システムの各種オンラインマニュアル (man pages)
+    「man sed」、「man regexp」を実行してほしい。
+    「man ed」中の正規表現の章も参考になる。
+    だたし、オンラインマニュアルは一般的に難解である。sed と
+    正規表現を初めて学ぶユーザーには向いていないが、
+    使い慣れているユーザーにとっては参考となる。
+
+クォートの構文: これまで紹介した例では、編集コマンドを
+ダブルクォート ("...") ではなくシングルクォート ('...') を
+使用している。一般的に sed は UNIX 環境で利用するためである。
+シングルクォートは、UNIX シェルがドル記号「$」やバッククォート
+「`...`」を解釈するのを防ぐ (ダブルクォート中ではシェルにより
+展開されてしまう)。csh や csh 派生のシェルを使用している
+ユーザーは、上記の例が適切に動作させるには、感嘆記号「!」を
+バックスラッシュ「\」でエスケープする (つまり「\!」とする)
+必要がある (シングルクォートで括られている場合も含む)。
+DOS 用の sed では、編集コマンドはシングルクォートではなく
+ダブルクォートで括る必要がある。
+
+sed スクリプトでの「\t」の使用: この文書ではスクリプト中の
+タブ文字 (0x09) を明確に表すために「\t」という表現を用いた。
+しかし、ほとんどのバージョンの sed は「\t」記法を解釈しない。
+よって、コマンドラインでスクリプトを入力するときは、「\t」の
+代わりにタブキーを押さなければならない。「\t」を正規表現の
+メタ文字として解釈するのは、awk, perl, HHsed, sedmod そして
+GNU sed 3.02.80 である。
+
+sed のバージョン: sed はバージョンにより動作が異なり、わずかで
+あるが、いくつか構文の違いが存在する。特に、編集コマンドにおいて、
+ラベルの使用 (:name)、コマンドの最後以外での分岐命令 (b, t) の
+使用がサポートされていないものがある。上で紹介した例では、
+ほとんどの sed で問題ない構文を用いたが、GNU 版の sed では
+より簡潔な構文で書ける。例えば、次のような長いコマンドがあるとする:
 
    sed -e '/AAA/b' -e '/BBB/b' -e '/CCC/b' -e d
 
-it is heartening to know that GNU sed will let you reduce it to:
+GNU sed では次のように短かく書ける:
 
-   sed '/AAA/b;/BBB/b;/CCC/b;d'      # or even
-   sed '/AAA\|BBB\|CCC/b;d'
+   sed '/AAA/b;/BBB/b;/CCC/b;d'      # もしくは
+   sed '/AAA\|BBB\|CCC/b;d'          # と書ける
 
-In addition, remember that while many versions of sed accept a command
-like "/one/ s/RE1/RE2/", some do NOT allow "/one/! s/RE1/RE2/", which
-contains space before the 's'. Omit the space when typing the command.
+ほかには、多くの sed バージョンが「/one/ s/RE1/RE2/」のような
+コマンドを受け入れるが、いくつかの sed は「/one/! s/RE1/RE2/」を
+受け入れないことを覚えておいて欲しい。「s」の前のスペースが問題
+であるため、そのようなコマンドを入力する場合は「s」の前の
+スペースを取り除くこと。
 
-OPTIMIZING FOR SPEED: If execution speed needs to be increased (due to
-large input files or slow processors or hard disks), substitution will
-be executed more quickly if the "find" expression is specified before
-giving the "s/.../.../" instruction. Thus:
+速度の最適化: 実行速度を上げる必要がある場合 (入力が巨大、CPU や
+ハードディスクが遅い、など)、「find」表現を「s/.../.../」命令の
+前に指定することで、置換の実行速度を向上できる。例:
 
-   sed 's/foo/bar/g' filename         # standard replace command
-   sed '/foo/ s/foo/bar/g' filename   # executes more quickly
-   sed '/foo/ s//bar/g' filename      # shorthand sed syntax
+   sed 's/foo/bar/g' filename         # 通常の置換コマンド
+   sed '/foo/ s/foo/bar/g' filename   # より速く実行
+   sed '/foo/ s//bar/g' filename      # より短かい記法
 
-On line selection or deletion in which you only need to output lines
-from the first part of the file, a "quit" command (q) in the script
-will drastically reduce processing time for large files. Thus:
+行の取捨選択において、入力の最初の部分が処理対象の場合は、
+スクリプトに終了コマンド「q」を指定することで巨大ファイルの
+処理時間を劇的に短縮できる。例:
 
-   sed -n '45,50p' filename           # print line nos. 45-50 of a file
-   sed -n '51q;45,50p' filename       # same, but executes much faster
+   sed -n '45,50p' filename           # ファイルの 45 〜 50 行目を表示
+   sed -n '51q;45,50p' filename       # 同上。しかし、より速く実行
 
-If you have any additional scripts to contribute or if you find errors
-in this document, please send e-mail to the compiler. Indicate the
-version of sed you used, the operating system it was compiled for, and
-the nature of the problem. To qualify as a one-liner, the command line
-must be 65 characters or less. Various scripts in this file have been
-written or contributed by:
+あなたが考えたスクリプトを寄稿したり、この文書の間違いを発見した
+場合は、著者に e-mail を送って知らせてほしい。その際は、あなたが
+利用した sed のバージョンと OS、問題の内容を示してください。
+ワンライナー (1 行スクリプト) になるように、コマンドラインは 65 文字
+以内で記述するように。
 
- Al Aab                   # founder of "seders" list
- Edgar Allen              # various
- Yiorgos Adamopoulos      # various
- Dale Dougherty           # author of "sed & awk"
- Carlos Duarte            # author of "do it with sed"
- Eric Pement              # author of this document
- Ken Pizzini              # author of GNU sed v3.02
- S.G. Ravenhall           # great de-html script
- Greg Ubben               # many contributions & much help
+本ファイルで紹介したスクリプトの提供者:
+
+ Al Aab                   # 「seders」メーリングリスト設立者
+ Edgar Allen              # そのほか
+ Yiorgos Adamopoulos      # そのほか
+ Dale Dougherty           # 「sed & awk」no著者
+ Carlos Duarte            # 「do it with sed」の著者
+ Eric Pement              # この文書の著者
+ Ken Pizzini              # GNU sed v3.02 の作者
+ S.G. Ravenhall           # 素晴しい HTML タグ除去スクリプト
+ Greg Ubben               # 多くの寄稿と手助け
 -------------------------------------------------------------------------
