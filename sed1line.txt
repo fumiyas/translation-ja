@@ -91,10 +91,10 @@ Compiled by Eric Pement - pemente[at]northpark[dot]edu        version 5.5
 
  # 各行の行頭の空白文字 (スペース、タブ) を削除
  # すべてのテキストが左に揃う
- sed 's/^[ \t]*//'                    # see note on '\t' at end of file
+ sed 's/^[ \t]*//'                    # 本ファイル最後の「\t」の注意参照
 
  # 各行の行末の空白文字 (スペース、タブ) を削除
- sed 's/[ \t]*$//'                    # see note on '\t' at end of file
+ sed 's/[ \t]*$//'                    # 本ファイル最後の「\t」の注意参照
 
  # 各行の行頭と行末の空白文字 (スペース、タブ) を削除
  sed 's/^[ \t]*//;s/[ \t]*$//'
@@ -127,7 +127,7 @@ Compiled by Eric Pement - pemente[at]northpark[dot]edu        version 5.5
  sed '/baz/!s/foo/bar/g'
 
  # 「scarlet」、「ruby」、「puce」を「red」に変更
- sed 's/scarlet/red/g;s/ruby/red/g;s/puce/red/g'   # 多く sed 対応
+ sed 's/scarlet/red/g;s/ruby/red/g;s/puce/red/g'   # ほとんどの sed
  gsed 's/scarlet\|ruby\|puce/red/g'                # GNU sed のみ
 
  # 行の順番を逆にする (「tac」の模倣)
@@ -186,8 +186,8 @@ Compiled by Eric Pement - pemente[at]northpark[dot]edu        version 5.5
  sed '/regexp/!d'             # 手法 2
 
  # 正規表現に一致しない行だけを表示 (「grep -v」の模倣)
- sed -n '/regexp/!p'          # method 1, corresponds to above
- sed '/regexp/d'              # method 2, simpler syntax
+ sed -n '/regexp/!p'          # 手法 1, 上の例の逆に相当
+ sed '/regexp/d'              # 手法 2, より単純な書き方
 
  # 正規表現に一致する行の直前の行を表示する、ただし
  # 正規表現に一致する行は表示しない
@@ -208,7 +208,7 @@ Compiled by Eric Pement - pemente[at]northpark[dot]edu        version 5.5
  sed '/AAA.*BBB.*CCC/!d'
 
  # 「AAA」、「BBB」、「CCC」いずれかを含む行を表示 (「egrep」の模倣)
- sed -e '/AAA/b' -e '/BBB/b' -e '/CCC/b' -e d    # 多くの sed 対応
+ sed -e '/AAA/b' -e '/BBB/b' -e '/CCC/b' -e d    # ほとんどの sed
  gsed '/AAA\|BBB\|CCC/!d'                        # GNU sed のみ
 
  # 「AAA」を含む段落を表示 (段落は空行で区切られていることを前提)
@@ -227,7 +227,7 @@ Compiled by Eric Pement - pemente[at]northpark[dot]edu        version 5.5
  sed -n '/^.\{65\}/p'
 
  # 64 文字未満の行だけを表示
- sed -n '/^.\{65\}/!p'        # 手法 1, 上記スクリプトの逆に相当
+ sed -n '/^.\{65\}/!p'        # 手法 1, 上の例の逆に相当
  sed '/^.\{65\}/d'            # 手法 2, より単純な書き方
 
  # 正規表現に一致する最初の行から最後の行までを表示
@@ -483,7 +483,7 @@ GNU sed では次のように短かく書ける:
  Dale Dougherty           # 「sed & awk」no著者
  Carlos Duarte            # 「do it with sed」の著者
  Eric Pement              # この文書の著者
- Ken Pizzini              # GNU sed v3.02 の作者
+ Ken Pizzini              # GNU sed 3.02 の作者
  S.G. Ravenhall           # 素晴しい HTML タグ除去スクリプト
  Greg Ubben               # 多くの寄稿と手助け
 -------------------------------------------------------------------------
