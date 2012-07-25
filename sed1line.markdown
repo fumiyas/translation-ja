@@ -11,7 +11,7 @@
 
 このファイルの最新版は下記の URL で入手できます:
 
-  * <https://github.com/fumiyas/translation-ja/blob/master/sed1line.txt>
+  * <https://github.com/fumiyas/translation-ja/blob/master/sed1line.markdown>
 
 このファイルの原書 (英語) の最新版は下記の URL で入手できます:
 
