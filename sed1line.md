@@ -310,8 +310,8 @@
     sed '/./,$!d'
 
     # 入力の最後に現われる空行をすべて削除
-    sed -e :a -e '/^\n*$/{$d;N;ba' -e '}'  # works on all seds
-    sed -e :a -e '/^\n*$/N;/\n$/ba'        # ditto, except for gsed 3.02.*
+    sed -e :a -e '/^\n*$/{$d;N;ba' -e '}'  # すべての sed で動作
+    sed -e :a -e '/^\n*$/N;/\n$/ba'        # 同上、ただし gsed 3.02.* を除く
 
     # 各段落の最後の 1 行を削除
     sed -n '/^$/{p;h;};/./{x;/./p;}'
