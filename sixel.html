@@ -1,40 +1,53 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <HTML LANG="EN-US">
 <HEAD>
-<TITLE>VT100.net: VT330/VT340 Programmer Reference Manual</TITLE>
+<TITLE>VT100.net: VT330/VT340 プログラマーリファレンスマニュアル</TITLE>
 <LINK HREF="vt330.css" TYPE="text/css" REL="stylesheet">
 </HEAD>
 <BODY>
-<DIV CLASS="navbar"><A HREF="../../"><IMG CLASS="button" SRC="../../vt100.net-logo" ALT="VT100.net" HEIGHT="16" WIDTH="102"></A> VT330/VT340 Programmer Reference Manual Volume 2: Graphics Programming<TABLE WIDTH="100%">
-<COL SPAN="3" WIDTH="33%">
-<TBODY>
-<TR>
-<TD ALIGN="LEFT"><A HREF="chapter13.html">Chapter 13</A></TD>
-<TD ALIGN="CENTER"><A HREF="contents.html">Contents</A></TD>
-<TD ALIGN="RIGHT"><A HREF="chapter15.html">Chapter 15</A></TD>
-</TR>
-</TBODY>
-</TABLE>
-<HR></DIV>
-<H1 ID="S14"><SPAN CLASS="chapnum">14</SPAN> Sixel Graphics</H1>
-<H2 ID="S14.1">What are Sixels?</H2>
-<P>The VT300 can send and receive sixel graphics data. You can draw monochrome
-or color (VT340 only) images with sixel data.</P>
-<P>A <DFN>sixel</DFN> is a group of six pixels in a vertical column. A pixel (picture element) is
-the smallest displayable unit on a video screen. Sixels represent bitmap data
-for a graphic image. The terminal processes sixel data as bits of information. A
-bit value of 1 means turn on a pixel. A bit value of 0 means turn off the pixel.</P>
-<P>You use a single character code for each sixel. The terminal uses 6 bits of the
-8-bit character code to encode bitmap data.</P>
-<P>You can use sixels to design character sets and fonts for display. Volume 1,
-Chapter 5 of this manual describes how to design and load soft character sets
-into the terminal.</P>
-<H2 ID="S14.2">Sixel Data Format</H2>
-<P>The VT300 uses a device control string to send and receive sixel images.</P>
-<P CLASS="note">NOTE: See Volume 1, Chapter 2 of this manual for general information about
-device control strings.</P>
-<P>Many of Digital's printers recognize the control string format. Here are some
-examples.</P>
+<DIV CLASS="navbar"><A HREF="http://www.vt100.net/">VT100.net</A> VT330/VT340 プログラマーレファレンスマニュアル Volume 2: グラフィックスプログラミング
+</DIV>
+<dl>
+  <dt>原著:</dt>
+  <dd><a href="http://www.vt100.net/docs/vt3xx-gp/chapter14.html"> http://www.vt100.net/docs/vt3xx-gp/chapter14.html</a></dd>
+  <dt>訳者:</dt>
+  <dd>佐藤文優 (2014-09-07)</dd>
+</div>
+<HR>
+<H1 ID="S14"><SPAN CLASS="chapnum">14</SPAN> Sixel グラフィックス</H1>
+<H2 ID="S14.1">Sixels とは?</H2>
+<P>
+VT300 は Sixel グラッフィックスデータの送受信に対応しています。
+Sixel データでモノクロあるいはカラー (VT340 のみ) のイメージを描画することができます。
+</P>
+<P>
+<DFN>Sixel</DFN> は 6 つの縦列のピクセルの集合です。
+ピクセル (画像の要素) は、ビデオスクリーン上に表示可能な最小の単位です。
+Sixel はグラフィックスイメージのビットマップデータを表現します。
+端末は Sixel データをビットマップ情報として処理します。
+ビット値の 1 はピクセルのオン、0 はオフを意味します。
+</P>
+<P>
+各 Sixel ごとに 1 つの文字コードを使用します。
+端末は、Sixel を現わす 1 つの
+8 ビット文字コードのうち 6 ビットにエンコードされたビットマップデータを用います。
+</P>
+<P>
+Sixel で文字セットやフォントをデザインして表示することができます。
+本マニュアルの Volume 1, Chapter 5 にて、
+ソフト文字セットをデザインして端末にロードする手順を解説しています。
+</P>
+<H2 ID="S14.2">Sixel データ形式</H2>
+<P>
+VT300 は、デバイス制御文字列を用いて Sixel イメージを送受信します。
+</P>
+<P CLASS="note">注意:
+デバイス制御文字列についての情報は本マニュアルの Volume 1, Chapter 2 を参照のこと。
+</P>
+<P>
+Digital 社のプリンターの多くは制御文字列フォーマットを受け付けます。
+以下に対応プリンターの例を挙げます.
+</P>
 <UL>
 <LI>LA12</LI>
 <LI>LA50</LI>
@@ -42,13 +55,16 @@ examples.</P>
 <LI>LA34-VA</LI>
 <LI>LN03</LI>
 </UL>
-<P>Different printers have different output quality. For example, dot matrix printers
-are very different from laser printers. When you design sixel images on the
-terminal for printing, you should use parameter values that are appropriate for
-your printer. For more information, see your printer's programmer reference
-manual.</P>
-<H3 ID="S14.2.1">Device Control String</H3>
-<P>The format for the device control string is as follows.</P>
+<P>
+プリンターは機種ごとに異なる出力品質を持ちます。
+例えば、
+ドットマトリックスプリンターはレーザープリンターとはかなり異なります。
+端末上で印刷用の Sixel イメージをデザインする場合は、
+プリンターに適したパラメーター値を用いなければなりません。
+詳細は、お使いのプリンターのプログラマーリファレンスマニュアルを参照してください。
+</P>
+<H3 ID="S14.2.1">デバイス制御文字列</H3>
+<P>デバイス制御文字列の形式は以下の通りです。</P>
 <DIV CLASS="example"><TABLE CLASS="codeseq">
 <TBODY>
 <TR>
@@ -73,29 +89,35 @@ manual.</P>
 </TR>
 </TBODY>
 </TABLE></DIV>
-<P>where</P>
-<DIV CLASS="example"><P><B>DCS</B> is a C1 control character that introduces the sixel data sequence.
-You can also express DCS as the 7-bit escape sequence ESC P for a 7-bit
-environment.</P>
-<P><B>P1</B> is the macro parameter. This parameter indicates the pixel aspect ratio
-used by the application or terminal. The pixel aspect ratio defines the
-shape of the pixel dots the terminal uses to draw images. For example, a
-pixel that is twice as high as it is wide has as aspect ratio of 2:1. The
-following list shows the values you can use for P1.</P>
-<P CLASS="note">NOTE: The macro parameter is provided for compatibility with existing
-Digital software. New applications should set P1 to 0 and use the set raster
-attributes control, described later in this chapter.</P>
+<DIV CLASS="example"><P>
+<B>DCS</B> は C1 制御文字であり、Sixel データ列の開始を示します。
+7 ビット環境では DCS はエスケープシーケンス ESC P でも表すことができます。
+</P>
+<P>
+<B>P1</B> はマクロパラメーターであり、
+アプリケーションあるいは端末で使用されるピクセルのアスペクト比を示します。
+ピクセルのアスペクト比は、
+端末がイメージを描画する際に用いるピクセルのドット形状を定義します。
+例えば、ドットの縦幅が横幅の 2 倍の場合、アスペクト比は 2:1 になります。
+以下は P1 に指定できる値の一覧です。
+</P>
+<P CLASS="note">注意:
+マクロパラメーターは、既存の
+Digital 社製ソフトウェアとの互換性のために用意されています。
+新しいアプリケーションは、 P1 は 0 に設定し、
+代わりにラスター属性制御(後述)をセットしてください。
+</P>
 <TABLE CLASS="dpadded">
 <THEAD>
 <TR VALIGN="BOTTOM">
 <TH>P1</TH>
-<TH>Pixel Aspect Ratio<BR>(Vertical:Horizontal)</TH>
+<TH>ピクセルのアスペクト比<BR>(縦:横)</TH>
 </TR>
 </THEAD>
 <TBODY>
 <TR>
-<TD><STRONG>Omitted</STRONG></TD>
-<TD><STRONG>2:1</STRONG> (default)</TD>
+<TD><STRONG>省略</STRONG></TD>
+<TD><STRONG>2:1</STRONG> (デフォルト)</TD>
 </TR>
 <TR>
 <TD>0, 1</TD>
@@ -119,59 +141,82 @@ attributes control, described later in this chapter.</P>
 </TR>
 </TBODY>
 </TABLE>
-<P>You can override the setting of the macro parameter by using the set raster
-attributes character (", 2/2) in a sixel data string. See below.</P>
-<P><B>;</B> is a semicolon (3/11). This character separates numeric parameters in a
-DCS string.</P>
-<P><B>P2</B> selects how the terminal draws the background color. You can use one
-of three values.</P>
+<P>
+マクロパラメーターの設定は、Sixel データ文字列中でラスター属性文字 ("、2/2)
+をセットすることで上書きできます。下記を参照のこと。
+ See below.</P>
+<P>
+DCS 文字列中の数値パラメーターはセミコロン <B>;</B> (3/11) で区切ります。 
+</P>
+<P>
+<B>P2</B> は背景色の描画方式を選択します。
+次の 3 つから 1 つを選択します。
+</P>
 <TABLE CLASS="dpadded">
 <THEAD>
 <TR VALIGN="BOTTOM">
 <TH>P2</TH>
-<TH>Meaning</TH>
+<TH>意味</TH>
 </TR>
 </THEAD>
 <TBODY>
 <TR VALIGN="TOP">
-<TD><STRONG>0</STRONG> or 2 (default)</TD>
-<TD>Pixel positions specified as 0 are set to the current background color.</TD>
+<TD><STRONG>0</STRONG> または 2 (デフォルト)</TD>
+<TD>ピクセルに 0 が指定された場所は現在の背景色で描画される。</TD>
 </TR>
 <TR VALIGN="TOP">
 <TD>1</TD>
-<TD>Pixel positions specified as 0 remain at their current color.</TD>
+<TD>ピクセルに 0 が指定された場所は現在の色のままになる。</TD>
 </TR>
 </TBODY>
 </TABLE>
-<P><B>P3</B> is the horizontal grid size parameter. The horizontal grid size is the
-horizontal distance between two pixel dots. The VT300 ignores this parameter
-because the horizontal grid size is fixed at 0.0195 cm (0.0075 in).</P>
-<P><B>q</B> indicates that this device control string is a sixel command.</P>
-<P><B>s...s</B> is the sixel-encoded data string. The <DFN>sixel data characters</DFN> are characters
-in the range of ? (hex 3F) to ~ (hex 7E). Each sixel data character
-represents six vertical pixels of data. Each sixel data character represents
-a binary value equal to the character code value minus hex 3F.</P>
-<P><STRONG>Examples</STRONG></P>
+<P>
+<B>P3</B> は水平グリッドサイズのパラメーターです。
+水平グリッドサイズは 2 つのピクセルドット間の幅です。
+VT300 ではこのパラメーターは無視され、
+水平グリッドサイズは 0.0195 cm (0.0075 インチ) に固定されています。
+</P>
+<P>
+<B>q</B> は、このデバイス制御文字列が Sixel コマンドであることを示します。</P>
+<P>
+<B>s...s</B> は Sixel エンコードされたデータ文字列です。
+<DFN>Sixel データ文字</DFN> は、
+? (0x3F) から ~ (0x7E) の範囲の文字です。
+各 Sixel データ文字は、縦 6 つ分のピクセルであり、
+文字コードの値から 0x3F を引いたバイナリー値を表します。
+</P>
+<P><STRONG>例</STRONG></P>
 <UL>
-<LI>? (hex 3F) represents the binary value 000000.</LI>
-<LI>t (hex 74) represents the binary value 110101.</LI>
-<LI>~ (hex 7E) represents the binary value 111111.</LI>
+<LI>? (0x3F) はバイナリー値 000000 を表す。</LI>
+<LI>t (0x74) はバイナリー値 110101 を表す。</LI>
+<LI>~ (0x7E) はバイナリー値 111111 を表す。</LI>
 </UL>
-<P>The terminal translates the six bits to a <EM>sixel</EM> &#8211; six pixels in a vertical
-column. The least significant bit is at the top.</P>
-<P CLASS="note">NOTE: For information on how to code sixel characters, see "Soft Character
-Sets" in Volume 1, Chapter 5 of this manual.</P>
-<P>You can also use sixel control functions in the data string. The next section
-describes these characters and their functions.</P>
-<P><B>ST</B> is the string terminator. ST is a C1 control character. You can also
-express ST as the 7-bit escape sequence ESC \ for a 7-bit environment.</P></DIV>
-<H2 ID="S14.3">Sixel Control Functions</H2>
-<P>You can use sixel control functions to perform special functions, such as selecting
-colors and raster attributes.</P>
-<H3 ID="S14.3.1">Graphics Repeat Introducer (!)</H3>
-<P>The ! (2/1) character introduces a repeat sequence. A repeat sequence lets you
-repeat a graphic character a specified number of times. You use the following
-format for the repeat sequence.</P>
+<P>
+端末はこの 6 ビットの値を <EM>Sixel</EM> (縦の 6 つのピクセル) と解釈します。
+最下位のビットが一番上のピクセルになります。
+</P>
+<P CLASS="note">注意:
+Sixel 文字を作成する手順については、
+本マニュアルの Volume 1, Chapter 5「ソフト文字セット」を参照してください。
+</P>
+<P>
+Sixel データ文字列中には Sixel 制御機能も使用することができます。
+次の説で制御文字と機能について解説します。
+</P>
+<P>
+<B>ST</B> は文字列の終端を示します。
+ST は C1 制御文字です。
+7 ビット環境では ST はエスケープシーケンス ESC \ でも表すことができます。
+</P></DIV>
+<H2 ID="S14.3">Sixel 制御機能</H2>
+<P>
+特殊な機能を実行するには Sixel 制御機能を利用します。
+例えば色やラスター属性を選択できます。
+</P>
+<H3 ID="S14.3.1">グラフィックスの繰り返しの開始 (!)</H3>
+<P>文字 ! (2/1) は繰り返しの開始を示します。
+以下の形式で指定した回数だけグラフィックスを繰り返し描画することができます。
+</P>
 <DIV CLASS="example"><TABLE CLASS="codeseq">
 <TBODY>
 <TR>
