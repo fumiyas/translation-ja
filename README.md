@@ -3,4 +3,6 @@
 
   * sed1line.md
     * SED (UNIX stream editor) による便利な 1 行スクリプト
+  * vt3xx-sixel.md
+    * Sixel グラフィックス - VT100.net: VT330/VT340 プログラマーリファレンスマニュアル
   
