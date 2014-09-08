@@ -97,7 +97,7 @@ Digital 社のプリンターの多くは制御文字列フォーマットを受
 <B>P1</B> はマクロパラメーターであり、
 アプリケーションあるいは端末で使用されるピクセルのアスペクト比を示します。
 ピクセルのアスペクト比は、
-端末がイメージを描画する際に用いるピクセルのドット形状を定義します。
+端末がイメージを描画する際に用いるピクセルのドット形状を指示します。
 例えば、ドットの縦幅が横幅の 2 倍の場合、アスペクト比は 2:1 になります。
 以下は P1 に指定できる値の一覧です。
 </P>
@@ -105,7 +105,7 @@ Digital 社のプリンターの多くは制御文字列フォーマットを受
 マクロパラメーターは、既存の
 Digital 社製ソフトウェアとの互換性のために用意されています。
 新しいアプリケーションは、 P1 は 0 に設定し、
-代わりにラスター属性制御(後述)をセットしてください。
+代わりにラスター属性設定コマンド(後述)を使用してください。
 </P>
 <TABLE CLASS="dpadded">
 <THEAD>
@@ -222,7 +222,7 @@ ST は C1 制御文字です。
 <TR>
 <TH>!</TH>
 <TH>Pn</TH>
-<TH>character</TH>
+<TH>文字</TH>
 </TR>
 <TR>
 <TD>2/1</TD>
@@ -231,18 +231,22 @@ ST は C1 制御文字です。
 </TR>
 </TBODY>
 </TABLE></DIV>
-<P>where</P>
-<DIV CLASS="example"><P><B>Pn</B> is the repeat count. The repeat count can be any decimal value. For
-example, if you use a repeat count of 23, the next character repeats 23
-times.</P>
-<P><B>character</B> is the character to repeat. You can use any character in the
-range of ? (hex 3F) to ~ (hex 7E).</P></DIV>
-<H3 ID="S14.3.2">Raster Attributes (")</H3>
-<P>The " (2/2) character is the set raster attributes command. This command selects
-the raster attributes for the sixel data string that follows it. You must use
-the command before any sixel data string. The " command overrides any raster
-attributes set by the macro parameter described above. You use the following
-format for the " command.</P>
+<DIV CLASS="example"><P>
+<B>Pn</B> は繰り返す回数であり、任意の十進数の値を与えることができます。
+例えば 23 を指定すると、続く文字を 23 回繰り返します。
+</P>
+<P><B>文字</B>
+は繰り返す文字です。
+? (0x3F) から ~ (0x7E) の範囲の文字を指定します。
+</P></DIV>
+<H3 ID="S14.3.2">ラスター属性 (")</H3>
+<P>
+文字 " (2/2) は、ラスター属性設定コマンドです。
+このコマンドで後に続く Sixel データ文字列に対するラスター属性を選択します。
+あらゆる Sixel データ文字列の前に使用する必要があります。
+コマンド " は、前述のマクロパラメーターによるラスター属性よりも優先されます。
+コマンドの形式は以下の通りです。
+</P>
 <DIV CLASS="example"><TABLE CLASS="codeseq">
 <TBODY>
 <TR>
@@ -263,37 +267,51 @@ format for the " command.</P>
 </TR>
 </TBODY>
 </TABLE></DIV>
-<P>where</P>
-<DIV CLASS="example"><P><B>Pan</B> and <B>Pad</B> define the pixel aspect ratio for the following sixel data
-string. Pan is the numerator, and Pad is the denominator.</P>
+<DIV CLASS="example"><P>
+<B>Pan</B> と <B>Pad</B> は、続く Sixel データ文字列のピクセルのアスペクト比を指示します。
+Pan は分子、Pad は分母です。</P>
 <PRE>Pan
---- = pixel aspect ratio
+--- = ピクセルのアスペクト比
 Pad</PRE>
-<P>The pixel aspect ratio defines the shape of the pixels the terminal uses to
-draw the sixel image.</P>
-<P>Pan defines the vertical shape of the pixel. Pad defines the horizontal
-shape of the pixel. For example, to define a pixel that is twice as high as
-it is wide, you use a value of 2 for Pan and 1 for Pad.</P>
-<P>If you use the set raster attributes command (") in a sixel data string, you
-must specify a pixel aspect ratio. You can only use integer values for Pan
-and Pad. The VT300 rounds the pixel aspect ratio to the nearest integer.</P>
-<P><B>Ph</B> and <B>Pv</B> define the horizontal and vertical size of the image (in pixels),
-respectively.</P>
-<P>Ph and Pv do <EM>not</EM> limit the size of the image defined by the sixel data.
-However, Ph and Pv let you omit background sixel data from the image
-definition and still have a color background. They also provide a concise
-way for the application or terminal to encode the size of an image.</P>
-<P CLASS="note">NOTE: The VT300 uses Ph and Pv to erase the background when P2 is
-set to 0 or 2.</P></DIV>
-<H3 ID="S14.3.3">Color Introducer (#)</H3>
-<P>The # (2/3) color introducer starts a color selection sequence. There are two
-ways to select colors.</P>
+<P>
+ピクセルのアスペクト比は端末が Sixel イメージを描画する際のピクセルの形状となります。
+</P>
+<P>
+Pan はピクセルの縦幅、Pad は横幅です。
+例えば、ドットの縦幅が横幅の 2 倍の場合、Pan には 2 を、Pad には 1 を指定します。
+</P>
+<P>
+Sixel データ文字列にラスター属性設定コマンド (") を使用する場合、
+ピクセルのアスペクト比は必ず指定しなければなりません。
+Pan と Pad には整数値のみ指定することができます。
+VT300 はピクセルのアスペクト比を最も近い整数値に丸めます。
+</P>
+<P>
+<B>Ph</B> と <B>Pv</B> は、イメージの横と縦のサイズを指示します(ピクセル単位)。
+</P>
+<P>
+Ph と Pv は Sixel データで示されるイメージのサイズを<em>制限しません</em>。
+しかし、Ph と Pv によって、
+イメージデータから背景色となる Sixel データを省略することが可能となります。
+また、
+アプリケーションあるいは端末にイメージサイズを通知する手軽な方法でもあります。
+</P>
+<P CLASS="note">注意:
+VT300 は、P2 が 0 または 2 に設定されている場合、Ph と Pv を使用して背景色で塗り潰します。
+</P></DIV>
+<H3 ID="S14.3.3">色指定 (#)</H3>
+<P>
+文字 # (2/3) は色指定の開始です。
+色指定には 2つの形式があります。
+</P>
 <UL>
-<LI>Select a color map entry by number.</LI>
-<LI>Use HLS (hue, lightness, and saturation) or RGB (red, green, blue) colors.</LI>
+<LI>数字で色番号を選択</LI>
+<LI>HLS (色相、輝度、彩度) または RGB (赤、緑、青) 形式で色番号に色を割り当て</LI>
 </UL>
 <H3 ID="S14.3.3.1">Basic Colors</H3>
-<P>You can use the following format to select a basic color map entry.</P>
+<P>
+以下の形式を使用することで色が割り当てられた色番号を選択することができます。
+</P>
 <DIV CLASS="example"><TABLE CLASS="codeseq">
 <TBODY>
 <TR>
@@ -306,12 +324,13 @@ ways to select colors.</P>
 </TR>
 </TBODY>
 </TABLE></DIV>
-<P>where</P>
-<DIV CLASS="example"><P><B>Pc</B> is the color number (<A HREF="#T14-1">Table 14-1</A>).</P></DIV>
-<P CLASS="note">NOTE: The VT330 has 4 available color map entries, the VT340 has 16.</P>
-<H3 ID="S14.3.3.2">HLS or RGB Colors</H3>
-<P>You use the following format to specify HLS or RGB
-colors. HLS and RGB are universally recognized color coordinate systems.</P>
+<DIV CLASS="example"><P>
+<B>Pc</B> は色番号です(<A HREF="#T14-1">Table 14-1</A>)。</P></DIV>
+<P CLASS="note">注意: VT330 は 4、VT340 は 16 の色を割り当てることができます。</P>
+<H3 ID="S14.3.3.2">HLS / RGB による色の割り当て</H3>
+<P>
+以下の形式で HLS または RGB で色を番号に割り当てます。
+HLS と RGB は色として識別されます。</P>
 <DIV CLASS="example"><TABLE CLASS="codeseq">
 <TBODY>
 <TR>
@@ -334,90 +353,95 @@ colors. HLS and RGB are universally recognized color coordinate systems.</P>
 </TR>
 </TBODY>
 </TABLE></DIV>
-<P>where</P>
-<DIV CLASS="example"><P><B>Pc</B> is the color number.</P>
-<P><B>Pu</B> is the color coordinate system (HLS or RGB).</P>
-<P><B>Px</B>, <B>Py</B>, and <B>Pz</B> are the color coordinates in the specified system. <A HREF="#T14-1">Table
-14-1</A> lists the possible values.</P></DIV>
+<DIV CLASS="example"><P><B>Pc</B> は色番号です。</P>
+<P><B>Pu</B> は表色系を選択します(HLS または RGB)。</P>
+<P><B>Px</B>、<B>Py</B>、<B>Pz</B> は指定した表色系で色を調合します。
+<A HREF="#T14-1">Table 14-1</A> は有効値の一覧です。</P></DIV>
 <TABLE ID="T14-1" CLASS="majortable">
-<CAPTION>Table 14-1 Color Specifier</CAPTION>
+<CAPTION>Table 14-1 色の指定</CAPTION>
 <THEAD>
 <TR>
-<TH>Parameter</TH>
-<TH>Possible Values</TH>
-<TH>Definition</TH>
+<TH>パラメーター</TH>
+<TH>有効値</TH>
+<TH>定義</TH>
 </TR>
 </THEAD>
 <TBODY>
 <TR VALIGN="TOP">
 <TD>Pc</TD>
-<TD>0 to 255</TD>
-<TD>The color number to define.</TD>
+<TD>0 から 255</TD>
+<TD>定義する色番号</TD>
 </TR>
 <TR VALIGN="TOP">
-<TD>Pu (required)</TD>
+<TD>Pu (必須)</TD>
 <TD>1<BR>2</TD>
-<TD>HLS (hue, lightness, and saturation)<BR>RGB (red, green, and blue)</TD>
+<TD>HLS (色相、輝度、彩度)<BR>RGB (赤、緑、青)</TD>
 </TR>
 <TR VALIGN="TOP">
-<TD COLSPAN="3"><P CLASS="note">NOTE: The values of the following parameters depend on the color coordinate
-system selected (HLS or RGB).</P></TD>
+<TD COLSPAN="3"><P CLASS="note">注意: このパラメーターに続く値は指定した表色系 (HLS または RGB) に依存します。</P></TD>
 </TR>
 <TR VALIGN="TOP">
-<TH COLSPAN="3">HLS Values</TH>
-</TR>
-<TR VALIGN="TOP">
-<TD>Px</TD>
-<TD>0 to 360 degrees</TD>
-<TD>Hue angle</TD>
-</TR>
-<TR VALIGN="TOP">
-<TD>Py</TD>
-<TD>0 to 100 percent</TD>
-<TD>Lightness</TD>
-</TR>
-<TR VALIGN="TOP">
-<TD>Pz</TD>
-<TD>0 to 100 percent</TD>
-<TD>Saturation</TD>
-</TR>
-<TR VALIGN="TOP">
-<TH COLSPAN="3">RGB Values</TH>
+<TH COLSPAN="3">HLS 値</TH>
 </TR>
 <TR VALIGN="TOP">
 <TD>Px</TD>
-<TD>0 to 100 percent</TD>
-<TD>Red intensity</TD>
+<TD>0 〜 360 度</TD>
+<TD>色相 (Hue angle)</TD>
 </TR>
 <TR VALIGN="TOP">
 <TD>Py</TD>
-<TD>0 to 100 percent</TD>
-<TD>Green intensity</TD>
+<TD>0 〜 100 %</TD>
+<TD>明度 (Lightness)</TD>
 </TR>
 <TR VALIGN="TOP">
 <TD>Pz</TD>
-<TD>0 to 100 percent</TD>
-<TD>Blue intensity</TD>
+<TD>0 〜 100 %</TD>
+<TD>彩度 (Saturation)</TD>
 </TR>
 <TR VALIGN="TOP">
-<TD COLSPAN="3"><P CLASS="note">NOTE: See the "<A HREF="chapter2.html#S2.4">Output Mapping</A>" section in <A HREF="chapter2.html">Chapter 2</A> for a discussion of
+<TH COLSPAN="3">RGB 値</TH>
+</TR>
+<TR VALIGN="TOP">
+<TD>Px</TD>
+<TD>0 〜 100 %</TD>
+<TD>赤の明度</TD>
+</TR>
+<TR VALIGN="TOP">
+<TD>Py</TD>
+<TD>0 〜 100 %</TD>
+<TD>緑の明度</TD>
+</TR>
+<TR VALIGN="TOP">
+<TD>Pz</TD>
+<TD>0 〜 100 %</TD>
+<TD>青の明度</TD>
+</TR>
+<TR VALIGN="TOP">
+<TD COLSPAN="3"><P CLASS="note">注意: See the "<A HREF="http://www.vt100.net/docs/vt3xx-gp/chapter2.html#S2.4">Output Mapping</A>" section in <A HREF="http://www.vt100.net/docs/vt3xx-gp/chapter2.html">Chapter 2</A> for a discussion of
 shade and color programming.</P></TD>
 </TR>
 </TBODY>
 </TABLE>
-<H3 ID="S14.3.4">Graphics Carriage Return ($)</H3>
-<P>The $ (2/4) character indicates the end of the sixel line. The active position
-returns to the left page border of the same sixel line. You can use this character
-to overprint lines.</P>
-<H3 ID="S14.3.5">Graphics New Line (-)</H3>
-<P>The - (2/13) character indicates the end of a sixel line. The active position
-moves to the left margin of the next sixel line.</P>
-<H3 ID="S14.3.6">Parameter Separator (;)</H3>
-<P>The ; (3/11) character separates numeric parameters in a device control string.
-If there is no number before the separator, the terminal assumes that parameter
-is 0. If there is a number after the separator, the terminal assumes that
-parameter is 0.</P>
-<H2 ID="S14.4">Sixel Scrolling Mode</H2>
+<H3 ID="S14.3.4">グラフィックスの復帰 ($)</H3>
+<P>
+文字 $ (2/4) は Sixel 行の終端を示します。
+描画位置が現在の Sixel 行の左端に戻ります。
+この文字を利用して行を上書きすることができます。
+</P>
+<H3 ID="S14.3.5">グラフィックスの改行 (-)</H3>
+<P>
+文字 - (2/13) は Sixel 行の終端を示します。
+描画位置が現在の Sixel 行の次行の左端に移動します。
+</P>
+<H3 ID="S14.3.6">パラメーターの区切り (;)</H3>
+<P>
+文字 ; (3/11) はデバイス制御文字中の数値パラメーターを区切ります。
+区切り文字の前に数値が指定されていない場合、
+端末はパラメーター値が 0 であると認識します。
+区切り文字の後に数字が指定されている場合、
+端末はパラメーター値が 0 であると認識します。<!-- FIXME: 意味不明 -->
+</P>
+<H2 ID="S14.4">Sixel スクロールモード</H2>
 <P>You can set the sixel scrolling mode by using the <B>Sixel Scrolling</B> feature in the
 Graphics Set-Up screen. You can also select this mode by using the sixel
 display mode (DECSDM) control function.</P>
@@ -482,16 +506,6 @@ sixel display mode is reset, the <B>Sixel Scrolling</B> feature is disabled.</P>
 </TBODY>
 </TABLE></DIV>
 <DIV CLASS="navbar"><HR>
-<TABLE WIDTH="100%">
-<COL SPAN="3" WIDTH="33%">
-<TBODY>
-<TR>
-<TD ALIGN="LEFT"><A HREF="chapter13.html">Chapter 13</A></TD>
-<TD ALIGN="CENTER"><A HREF="contents.html">Contents</A></TD>
-<TD ALIGN="RIGHT"><A HREF="chapter15.html">Chapter 15</A></TD>
-</TR>
-</TBODY>
-</TABLE>
 <DIV CLASS="navbot">http://vt100.net/docs/vt3xx-gp/chapter14.html</DIV></DIV>
 </BODY>
 </HTML>
