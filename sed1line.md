@@ -7,7 +7,7 @@ SED (UNIX stream editor) による便利な 1 行スクリプト
   * 編集: Eric Pement - pemente[at]northpark[dot]edu
   * バージョン: 5.5 (2005-12-29)
   * 日本語訳: 佐藤 文優
-    + <http://fumiyas.github.io/>
+    + <https://fumiyas.github.io/>
     + <https://twitter.com/satoh_fumiyasu>
   * 日本語バージョン: 2014-03-17
 
