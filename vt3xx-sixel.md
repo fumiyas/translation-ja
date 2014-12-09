@@ -8,8 +8,9 @@ Sixel グラフィックス - VT100.net: VT330/VT340 プログラマーリファ
     + 14 Sixel Graphics
     + <http://www.vt100.net/docs/vt3xx-gp/chapter14.html>
   * 日本語訳: 佐藤 文優
-    + <https://fumiyas.github.io/>
     + <https://twitter.com/satoh_fumiyasu>
+    + <https://fumiyas.github.io/>
+    + <https://fumiyas.github.io/vt/sixel.html>
   * 日本語バージョン: 2014-09-08
 
 Sixel とは?
