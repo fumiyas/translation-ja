@@ -49,13 +49,13 @@ sed 'G;G'
 sed 'n;d'
 
 # 正規表現「regexp」に一致するすべての行の上に空行を挿入
-sed '/regex/{x;p;x;}'
+sed '/regexp/{x;p;x;}'
 
 # 正規表現「regexp」に一致するすべての行の下に空行を挿入
-sed '/regex/G'
+sed '/regexp/G'
 
 # 正規表現「regexp」に一致するすべての行の上下に空行を挿入
-sed '/regex/{x;p;x;G;}'
+sed '/regexp/{x;p;x;G;}'
 ```
 
 番号付け
