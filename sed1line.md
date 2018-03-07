@@ -98,7 +98,7 @@ sed -n p                             # 手法 2
 
 # DOS 環境: DOS 形式の改行 (CR/LF) を UNIX 形式 (LF) に変換
 # UnixUtils 付属の sed バージョン 4.0.7 以降でのみ動作する。
-# UnixUtils 付属の sed は特殊な「--text」オプションを持っていか
+# UnixUtils 付属の sed は特殊な「--text」オプションを持っているか
 # どうかで識別でき、「--help」オプションを利用して確認できる。
 # ほかの sed では、DOS の改行を UNIX の改行に変換することは
 # 不可能。代わりに tr コマンドを利用する。
